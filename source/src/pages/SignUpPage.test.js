@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/vue';
+import userEvent from '@testing-library/user-event';
 import SignUpPage from './SignUpPage.vue';
 import '@testing-library/jest-dom';
 
@@ -41,7 +42,7 @@ describe('Sign Up page', () => {
     describe('Password Input', () => {
       it('Has password input', () => {
         render(SignUpPage);
-        const input = screen.queryByPlaceholderText('Password');
+        const input = screen.queryByPlaceholderText('password');
         expect(input).toBeInTheDocument();
       });
       it('Has password input label', () => {
@@ -58,7 +59,7 @@ describe('Sign Up page', () => {
     describe('Repeat Password Input', () => {
       it('Has Repeat Password input', () => {
         render(SignUpPage);
-        const input = screen.queryByPlaceholderText('Repeat Password');
+        const input = screen.queryByPlaceholderText(/repeat password/);
         expect(input).toBeInTheDocument();
       });
       it('Has Repeat Password input label', () => {
@@ -83,6 +84,17 @@ describe('Sign Up page', () => {
         const button = screen.queryByRole('button', { name: 'Sign Up' });
         expect(button).toBeDisabled();
       });
+    });
+  });
+  describe('Interactions', () => {
+    it('Enable Sign Up when password fields are match', async () => {
+      render(SignUpPage);
+      const passwordInput = screen.queryByLabelText('Password:');
+      const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+      await userEvent.type(passwordInput, 'P4ssword');
+      await userEvent.type(passwordRepeatInput, 'P4ssword');
+      expect(button).toBeEnabled();
     });
   });
 });

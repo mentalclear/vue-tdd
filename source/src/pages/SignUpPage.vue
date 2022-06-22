@@ -18,17 +18,37 @@
     Password:
     <input
       id="password"
+      v-model="password"
       type="password"
-      placeholder="Password"
+      placeholder="password"
     ></label>
   <label for="repeat-password">
     Repeat Password:
     <input
       id="repeat-password"
+      v-model="passwordRepeat"
       type="password"
-      placeholder="Repeat Password"
+      placeholder="repeat password"
     ></label>
-  <button disabled>
+  <button :disabled="isDisabled">
     Sign Up
   </button>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      password: '',
+      passwordRepeat: '',
+    };
+  },
+  computed: {
+    isDisabled() {
+      return this.password && this.passwordRepeat
+        ? this.password !== this.passwordRepeat
+        : true;
+    },
+  },
+};
+</script>

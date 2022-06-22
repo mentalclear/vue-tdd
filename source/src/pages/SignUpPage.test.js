@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/vue';
+import axios from 'axios';
 import userEvent from '@testing-library/user-event';
 import SignUpPage from './SignUpPage.vue';
 import '@testing-library/jest-dom';
@@ -95,6 +96,33 @@ describe('Sign Up page', () => {
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
       expect(button).toBeEnabled();
+    });
+    it('Sends username, email & pass to the BE after clicking Sign Up bttn', async () => {
+      render(SignUpPage);
+      const usernameInput = screen.queryByLabelText('User Name:');
+      const emailInput = screen.queryByLabelText('User Email:');
+      const passwordInput = screen.queryByLabelText('Password:');
+      const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+      await userEvent.type(usernameInput, 'user1');
+      await userEvent.type(emailInput, 'user1@mail.com');
+      await userEvent.type(passwordInput, 'P4ssword');
+      await userEvent.type(passwordRepeatInput, 'P4ssword');
+
+      // Mocking axios.post here:
+      const mockFn = jest.fn();
+      axios.post = mockFn;
+
+      await userEvent.click(button);
+
+      const firstCall = mockFn.mock.calls[0];
+      const body = firstCall[1]; // Represents 'data?' field of axios.post()
+
+      expect(body).toEqual({
+        username: 'user1',
+        email: 'user1@mail.com',
+        password: 'P4ssword',
+      });
     });
   });
 });

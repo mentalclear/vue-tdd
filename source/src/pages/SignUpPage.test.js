@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
-import 'whatwg-fetch';
+// import 'whatwg-fetch';
 import '@testing-library/jest-dom';
 
 describe('Sign Up page', () => {
@@ -101,12 +101,12 @@ describe('Sign Up page', () => {
       expect(button).toBeEnabled();
     });
     it('Sends username, email & pass to the BE after clicking Sign Up bttn', async () => {
-      let reqestBody;
+      let requestBody;
 
       // Creating msw server here, to intercept rest reqs:
       const server = setupServer(
         rest.post('/api/1.0/users', (req, res, ctx) => {
-          reqestBody = res.body;
+          requestBody = req.body;
           return res(ctx.status(200));
         }),
       );
@@ -132,17 +132,17 @@ describe('Sign Up page', () => {
       // Mocking fetch()
       // window.fetch = mockFn;
 
-      // await userEvent.click(button); // waiting for the button click
+      await userEvent.click(button); // waiting for the button click, axios, fetch
 
       // const firstCall = mockFn.mock.calls[0]; // Works with both axios and fetch
 
       // const body = firstCall[1]; // Represents 'data?' field of axios.post()
       // const body = JSON.parse(firstCall[1].body); // An approach for fetch
 
-      await userEvent.click(button); // waiting for the button click
+      // await userEvent.click(button); // waiting for the button click
 
       // expect(body).toEqual({ // variation for axios and fetch
-      expect(reqestBody).toEqual({
+      expect(requestBody).toEqual({
         username: 'user1',
         email: 'user1@mail.com',
         password: 'P4ssword',

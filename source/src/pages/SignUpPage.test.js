@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/vue';
-import axios from 'axios';
+// import axios from 'axios';
 import userEvent from '@testing-library/user-event';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
+import 'whatwg-fetch';
 import '@testing-library/jest-dom';
 
 describe('Sign Up page', () => {
@@ -98,6 +101,17 @@ describe('Sign Up page', () => {
       expect(button).toBeEnabled();
     });
     it('Sends username, email & pass to the BE after clicking Sign Up bttn', async () => {
+      let reqestBody;
+
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          reqestBody = res.body;
+          return res(ctx.status(200));
+        }),
+      );
+      server.listen();
+
       render(SignUpPage);
       const usernameInput = screen.queryByLabelText('User Name:');
       const emailInput = screen.queryByLabelText('User Email:');
@@ -109,16 +123,26 @@ describe('Sign Up page', () => {
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
 
+      // Mock axios and fetch:
+      // const mockFn = jest.fn(); // needed with both
+
       // Mocking axios.post here:
-      const mockFn = jest.fn();
-      axios.post = mockFn;
+      // axios.post = mockFn;
 
-      await userEvent.click(button);
+      // Mocking fetch()
+      // window.fetch = mockFn;
 
-      const firstCall = mockFn.mock.calls[0];
-      const body = firstCall[1]; // Represents 'data?' field of axios.post()
+      // await userEvent.click(button); // waiting for the button click
 
-      expect(body).toEqual({
+      // const firstCall = mockFn.mock.calls[0]; // Works with both axios and fetch
+
+      // const body = firstCall[1]; // Represents 'data?' field of axios.post()
+      // const body = JSON.parse(firstCall[1].body); // An approach for fetch
+
+      await userEvent.click(button); // waiting for the button click
+
+      // expect(body).toEqual({ // variation for axios and fetch
+      expect(reqestBody).toEqual({
         username: 'user1',
         email: 'user1@mail.com',
         password: 'P4ssword',

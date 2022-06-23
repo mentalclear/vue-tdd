@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 export default {
   data() {
@@ -63,12 +63,20 @@ export default {
   },
   methods: {
     submit() {
-      const data = {
+      const body = {
         username: this.username,
         email: this.email,
         password: this.password,
       };
-      axios.post('/api/1.0/users', data);
+      // axios.post('/api/1.0/users', body);
+
+      fetch('/api/1.0/users', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     },
   },
 };

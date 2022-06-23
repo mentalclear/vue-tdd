@@ -70,6 +70,7 @@ export default {
       };
       axios.post('/api/1.0/users', body);
 
+      // Need this for fetch tests:
       // fetch('/api/1.0/users', {
       //   method: 'POST',
       //   body: JSON.stringify(body),

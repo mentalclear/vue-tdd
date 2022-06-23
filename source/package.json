@@ -36,6 +36,7 @@
     "whatwg-fetch": "^3.6.2"
   },
   "jest": {
+    "verbose": true,
     "moduleFileExtensions": [
       "js",
       "vue"

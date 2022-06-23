@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
-// import 'whatwg-fetch';
 import '@testing-library/jest-dom';
 
 describe('Sign Up page', () => {
@@ -123,25 +122,8 @@ describe('Sign Up page', () => {
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
 
-      // Mock axios and fetch:
-      // const mockFn = jest.fn(); // needed with both
+      await userEvent.click(button); // waiting for the button click
 
-      // Mocking axios.post here:
-      // axios.post = mockFn;
-
-      // Mocking fetch()
-      // window.fetch = mockFn;
-
-      await userEvent.click(button); // waiting for the button click, axios, fetch
-
-      // const firstCall = mockFn.mock.calls[0]; // Works with both axios and fetch
-
-      // const body = firstCall[1]; // Represents 'data?' field of axios.post()
-      // const body = JSON.parse(firstCall[1].body); // An approach for fetch
-
-      // await userEvent.click(button); // waiting for the button click
-
-      // expect(body).toEqual({ // variation for axios and fetch
       expect(requestBody).toEqual({
         username: 'user1',
         email: 'user1@mail.com',

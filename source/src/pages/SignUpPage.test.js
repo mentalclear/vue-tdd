@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
 import '@testing-library/jest-dom';
 
-describe('Sign Up page', () => {
+describe('Sign Up page tests', () => {
   describe('Layout', () => {
     it('Has Sign Up header', () => {
       render(SignUpPage);

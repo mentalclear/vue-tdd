@@ -1,5 +1,5 @@
 <template>
-  <form action="">
+  <form>
     <h1>Sign Up</h1>
     <label for="username">
       User Name:
@@ -63,12 +63,14 @@ export default {
   },
   methods: {
     submit() {
-      const body = {
+      // const body = {
+
+      // };
+      axios.post('/api/1.0/users', {
         username: this.username,
         email: this.email,
         password: this.password,
-      };
-      axios.post('/api/1.0/users', body);
+      });
 
       // Need this for fetch tests:
       // fetch('/api/1.0/users', {

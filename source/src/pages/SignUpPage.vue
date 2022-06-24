@@ -1,45 +1,80 @@
 <template>
-  <form>
-    <h1>Sign Up</h1>
-    <label for="username">
-      User Name:
-      <input
-        id="username"
-        v-model="username"
-        type="text"
-        placeholder="User Name"
-      ></label>
-    <label for="email">
-      User Email:
-      <input
-        id="email"
-        v-model="email"
-        type="text"
-        placeholder="E-Mail"
-      ></label>
-    <label for="password">
-      Password:
-      <input
-        id="password"
-        v-model="password"
-        type="password"
-        placeholder="password"
-      ></label>
-    <label for="repeat-password">
-      Repeat Password:
-      <input
-        id="repeat-password"
-        v-model="passwordRepeat"
-        type="password"
-        placeholder="repeat password"
-      ></label>
-    <button
-      :disabled="isDisabled"
-      @click.prevent="submit"
-    >
-      Sign Up
-    </button>
-  </form>
+  <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
+    <form class="card mb-5">
+      <div class="card-header">
+        <h1 class="text-center">
+          Sign Up
+        </h1>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <label
+            for="username"
+            class="form-label"
+          >
+            User Name:
+            <input
+              id="username"
+              v-model="username"
+              type="text"
+              placeholder="User Name"
+              class="form-control"
+            ></label>
+        </div>
+        <div class="mb-3">
+          <label
+            for="email"
+            class="form-label"
+          >
+            User Email:
+            <input
+              id="email"
+              v-model="email"
+              type="text"
+              placeholder="E-Mail"
+              class="form-control"
+            ></label>
+        </div>
+        <div class="mb-3">
+          <label
+            for="password"
+            class="form-label"
+          >
+            Password:
+            <input
+              id="password"
+              v-model="password"
+              type="password"
+              placeholder="password"
+              class="form-control"
+            ></label>
+        </div>
+        <div class="mb-3">
+          <label
+            for="repeat-password"
+            class="form-label"
+          >
+            Repeat Password:
+            <input
+              id="repeat-password"
+              v-model="passwordRepeat"
+              type="password"
+              placeholder="repeat password"
+              class="form-control"
+            ></label>
+        </div>
+        <div class="text-center">
+          <button
+            :disabled="isDisabled"
+            class="btn btn-primary"
+            @click.prevent="submit"
+          >
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>

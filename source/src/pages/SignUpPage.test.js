@@ -90,13 +90,23 @@ describe('Sign Up page tests', () => {
     });
   });
   describe('Interactions', () => {
-    it('Enable Sign Up when password fields are match', async () => {
+    const setup = async () => {
       render(SignUpPage);
+      const usernameInput = screen.queryByLabelText('User Name:');
+      const emailInput = screen.queryByLabelText('User Email:');
       const passwordInput = screen.queryByLabelText('Password:');
       const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
-      const button = screen.queryByRole('button', { name: 'Sign Up' });
+      await userEvent.type(usernameInput, 'user1');
+      await userEvent.type(emailInput, 'user1@mail.com');
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
+    };
+
+    it('Enable Sign Up when password fields are match', async () => {
+      await setup();
+
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
       expect(button).toBeEnabled();
     });
     it('Sends username, email & pass to the BE after clicking Sign Up bttn', async () => {
@@ -111,24 +121,108 @@ describe('Sign Up page tests', () => {
       );
       server.listen();
 
-      render(SignUpPage);
-      const usernameInput = screen.queryByLabelText('User Name:');
-      const emailInput = screen.queryByLabelText('User Email:');
-      const passwordInput = screen.queryByLabelText('Password:');
-      const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
+      await setup();
+
       const button = screen.queryByRole('button', { name: 'Sign Up' });
-      await userEvent.type(usernameInput, 'user1');
-      await userEvent.type(emailInput, 'user1@mail.com');
-      await userEvent.type(passwordInput, 'P4ssword');
-      await userEvent.type(passwordRepeatInput, 'P4ssword');
 
       await userEvent.click(button); // waiting for the button click
+
+      await server.close();
 
       expect(requestBody).toEqual({
         username: 'user1',
         email: 'user1@mail.com',
         password: 'P4ssword',
       });
+    });
+    it('Enable Sign Up when password fields are match', async () => {
+      render(SignUpPage);
+      const passwordInput = screen.queryByLabelText('Password:');
+      const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+      await userEvent.type(passwordInput, 'P4ssword');
+      await userEvent.type(passwordRepeatInput, 'P4ssword');
+      expect(button).toBeEnabled();
+    });
+    it('Disallow clicking Sign Up bttn during ongoing API call', async () => {
+      let counter = 0;
+
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          counter += 1;
+          return res(ctx.status(200));
+        }),
+      );
+      server.listen();
+
+      await setup();
+
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button); // waiting for the button click
+
+      await userEvent.click(button); // waiting for the button click
+      await server.close(); // added
+      expect(counter).toBe(1);
+    });
+    it('Displays spinner while API call is in progress', async () => {
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(200))),
+      );
+      server.listen();
+
+      await setup();
+
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button); // waiting for the button click
+      await server.close();
+      const spinner = screen.queryByRole('status');
+      expect(spinner).toBeInTheDocument();
+    });
+    it('Doesn\'t display spinner when no API call is in progress', async () => {
+      await setup();
+      const spinner = screen.queryByRole('status');
+      expect(spinner).not.toBeInTheDocument();
+    });
+    it('Displays account activation info after successful sign in request', async () => {
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(200))),
+      );
+      server.listen();
+
+      await setup();
+
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button); // waiting for the button click
+      await server.close();
+
+      const text = await screen.findByText('Please check your e-mail to activate your account');
+      expect(text).toBeInTheDocument();
+    });
+    it('Doesn\'t display account activation msg be4 sigunp request', async () => {
+      await setup();
+      const text = screen.queryByText('Please check your e-mail to activate your account');
+      expect(text).not.toBeInTheDocument();
+    });
+    it('Doesn\'t display account activation msg for failed sigunp request', async () => {
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400))),
+      );
+      server.listen();
+      await setup();
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button); // waiting for the button click
+      await server.close();
+
+      const text = await screen.queryByText('Please check your e-mail to activate your account');
+      expect(text).not.toBeInTheDocument();
     });
   });
 });

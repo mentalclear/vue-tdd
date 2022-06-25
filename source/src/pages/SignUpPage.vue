@@ -65,15 +65,27 @@
         </div>
         <div class="text-center">
           <button
-            :disabled="isDisabled"
+            :disabled="isDisabled || disabled"
             class="btn btn-primary"
             @click.prevent="submit"
           >
+            <span
+              v-if="disabled"
+              class="spinner-border spinner-border-sm"
+              role="status"
+            />
             Sign Up
           </button>
         </div>
       </div>
     </form>
+    <div
+      v-if="signUpSuccess"
+      class="alert alert-success"
+      role="alert"
+    >
+      Please check your e-mail to activate your account
+    </div>
   </div>
 </template>
 
@@ -83,10 +95,13 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      username: '',
+      apiProgress: false,
+      disabled: false,
       email: '',
       password: '',
       passwordRepeat: '',
+      signUpSuccess: false,
+      username: '',
     };
   },
   computed: {
@@ -98,14 +113,17 @@ export default {
   },
   methods: {
     submit() {
-      // const body = {
-
-      // };
-      axios.post('/api/1.0/users', {
+      this.disabled = true;
+      // this.apiProgress = true; // Need another? Use disabled above!
+      const body = {
         username: this.username,
         email: this.email,
         password: this.password,
-      });
+      };
+      axios.post('/api/1.0/users', body)
+        .then(() => {
+          this.signUpSuccess = true;
+        });
 
       // Need this for fetch tests:
       // fetch('/api/1.0/users', {

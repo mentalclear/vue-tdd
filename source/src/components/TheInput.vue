@@ -10,10 +10,11 @@
         type="text"
         placeholder="User Name"
         class="form-control"
+        :class="{'is-invalid': help}"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       >
-      <span>{{ help }}</span>
+      <span class="invalid-feedback">{{ help }}</span>
     </label>
   </div>
 </template>

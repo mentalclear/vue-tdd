@@ -17,22 +17,6 @@
           label="User Name:"
           :help="errors.username"
         />
-        <!-- <div class="mb-3">
-          <label
-            for="username"
-            class="form-label"
-          >
-            User Name:
-            <input
-              id="username"
-              v-model="username"
-              type="text"
-              placeholder="User Name"
-              class="form-control"
-            >
-            <span>{{ errors.username }}</span>
-          </label>
-        </div> -->
         <div class="mb-3">
           <label
             for="email"

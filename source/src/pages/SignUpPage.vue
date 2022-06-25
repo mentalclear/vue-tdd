@@ -1,6 +1,10 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-    <form class="card mb-5">
+    <form
+      v-if="!signUpSuccess"
+      class="card mb-5"
+      data-testid="form-sign-up"
+    >
       <div class="card-header">
         <h1 class="text-center">
           Sign Up
@@ -80,8 +84,8 @@
       </div>
     </form>
     <div
-      v-if="signUpSuccess"
-      class="alert alert-success"
+      v-else
+      class="alert alert-success mt-3"
       role="alert"
     >
       Please check your e-mail to activate your account

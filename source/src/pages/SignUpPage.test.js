@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/vue';
+import { render, screen, waitFor } from '@testing-library/vue';
 // import axios from 'axios';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
@@ -223,6 +223,26 @@ describe('Sign Up page tests', () => {
 
       const text = await screen.queryByText('Please check your e-mail to activate your account');
       expect(text).not.toBeInTheDocument();
+    });
+    it('Hides sign up form after successful sign in request', async () => {
+      // Creating msw server here, to intercept rest reqs:
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(200))),
+      );
+      server.listen();
+
+      await setup();
+
+      const button = screen.queryByRole('button', { name: 'Sign Up' });
+
+      const form = screen.queryByTestId('form-sign-up');
+
+      await userEvent.click(button); // waiting for the button click
+      await server.close();
+
+      await waitFor(() => {
+        expect(form).not.toBeInTheDocument();
+      });
     });
   });
 });

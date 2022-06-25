@@ -23,7 +23,9 @@
               type="text"
               placeholder="User Name"
               class="form-control"
-            ></label>
+            >
+            <span>{{ errors.username }}</span>
+          </label>
         </div>
         <div class="mb-3">
           <label
@@ -102,6 +104,7 @@ export default {
       apiProgress: false,
       disabled: false,
       email: '',
+      errors: {},
       password: '',
       passwordRepeat: '',
       signUpSuccess: false,
@@ -128,7 +131,11 @@ export default {
         .then(() => {
           this.signUpSuccess = true;
         })
-        .catch(() => { });
+        .catch((error) => {
+          if (error.response.status === 400) {
+            this.errors = error.response.data.validationErrors;
+          }
+        });
 
       // Need this for fetch tests:
       // fetch('/api/1.0/users', {

@@ -16,8 +16,16 @@
           v-model="username"
           label="User Name:"
           :help="errors.username"
+          placeholder="User Name"
         />
-        <div class="mb-3">
+        <TheInput
+          id="email"
+          v-model="email"
+          label="User Email:"
+          :help="errors.email"
+          placeholder="E-Mail"
+        />
+        <!-- <div class="mb-3">
           <label
             for="email"
             class="form-label"
@@ -30,7 +38,7 @@
               placeholder="E-Mail"
               class="form-control"
             ></label>
-        </div>
+        </div> -->
         <div class="mb-3">
           <label
             for="password"

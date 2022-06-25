@@ -8,7 +8,7 @@
       <input
         :id="id"
         type="text"
-        placeholder="User Name"
+        :placeholder="placeholder"
         class="form-control"
         :class="{'is-invalid': help}"
         :value="modelValue"
@@ -35,6 +35,7 @@ export default {
       default: '',
     },
     modelValue: { type: String, default: '' },
+    placeholder: { type: String, default: '' },
   },
   emits: ['update:modelValue'],
 };

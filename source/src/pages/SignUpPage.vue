@@ -11,7 +11,13 @@
         </h1>
       </div>
       <div class="card-body">
-        <div class="mb-3">
+        <TheInput
+          id="username"
+          v-model="username"
+          label="User Name:"
+          :help="errors.username"
+        />
+        <!-- <div class="mb-3">
           <label
             for="username"
             class="form-label"
@@ -26,7 +32,7 @@
             >
             <span>{{ errors.username }}</span>
           </label>
-        </div>
+        </div> -->
         <div class="mb-3">
           <label
             for="email"
@@ -71,7 +77,7 @@
         </div>
         <div class="text-center">
           <button
-            :disabled="isDisabled || disabled"
+            :disabled="isDisabled || apiProgress"
             class="btn btn-primary"
             @click.prevent="submit"
           >
@@ -97,12 +103,15 @@
 
 <script>
 import axios from 'axios';
+import TheInput from '../components/TheInput.vue';
 
 export default {
+  components: {
+    TheInput,
+  },
   data() {
     return {
       apiProgress: false,
-      disabled: false,
       email: '',
       errors: {},
       password: '',
@@ -120,13 +129,13 @@ export default {
   },
   methods: {
     submit() {
-      this.disabled = true;
       this.apiProgress = true;
       const body = {
         username: this.username,
         email: this.email,
         password: this.password,
       };
+
       axios.post('/api/1.0/users', body)
         .then(() => {
           this.signUpSuccess = true;
@@ -135,6 +144,7 @@ export default {
           if (error.response.status === 400) {
             this.errors = error.response.data.validationErrors;
           }
+          this.apiProgress = false;
         });
 
       // Need this for fetch tests:

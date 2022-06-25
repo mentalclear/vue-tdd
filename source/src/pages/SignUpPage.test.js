@@ -163,7 +163,14 @@ describe('Sign Up page tests', () => {
       await screen.findByText('Please check your e-mail to activate your account');
       expect(counter).toBe(1);
     });
-    it.skip('Displays spinner while API call is in progress', async () => {
+    it('Displays spinner while API call is in progress', async () => {
+      // As it was in the course - permanently fails. Due to race condition.
+      // The API call returns too quickly. Added 5ms context delay:
+      // ctx.delay(5)
+      // passes with no issues now.
+      server.use(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.delay(5), ctx.status(200))),
+      );
       await setup();
 
       await userEvent.click(button);
@@ -230,6 +237,37 @@ describe('Sign Up page tests', () => {
 
       const text = await screen.findByText('Username cannot be null');
       expect(text).toBeInTheDocument();
+    });
+    it('Hides spinner after error response received', async () => {
+      server.use(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
+          validationErrors: {
+            username: 'Username cannot be null',
+          },
+        }))),
+      );
+
+      await setup();
+      await userEvent.click(button);
+      await screen.findByText('Username cannot be null');
+
+      const spinner = screen.queryByRole('status');
+      expect(spinner).not.toBeInTheDocument();
+    });
+    it('Enable the button after response received', async () => {
+      server.use(
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
+          validationErrors: {
+            username: 'Username cannot be null',
+          },
+        }))),
+      );
+
+      await setup();
+      await userEvent.click(button);
+      await screen.findByText('Username cannot be null');
+
+      expect(button).toBeEnabled();
     });
   });
 });

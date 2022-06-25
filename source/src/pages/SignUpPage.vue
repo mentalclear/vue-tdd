@@ -70,7 +70,7 @@
             @click.prevent="submit"
           >
             <span
-              v-if="disabled"
+              v-if="apiProgress"
               class="spinner-border spinner-border-sm"
               role="status"
             />
@@ -114,7 +114,7 @@ export default {
   methods: {
     submit() {
       this.disabled = true;
-      // this.apiProgress = true; // Need another? Use disabled above!
+      this.apiProgress = true;
       const body = {
         username: this.username,
         email: this.email,
@@ -123,6 +123,9 @@ export default {
       axios.post('/api/1.0/users', body)
         .then(() => {
           this.signUpSuccess = true;
+        })
+        .catch(() => {
+
         });
 
       // Need this for fetch tests:

@@ -128,9 +128,7 @@ export default {
         .then(() => {
           this.signUpSuccess = true;
         })
-        .catch(() => {
-
-        });
+        .catch(() => { });
 
       // Need this for fetch tests:
       // fetch('/api/1.0/users', {

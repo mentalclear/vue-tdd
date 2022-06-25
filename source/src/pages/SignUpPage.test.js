@@ -190,7 +190,11 @@ describe('Sign Up page tests', () => {
     });
     it('Doesn\'t display account activation msg for failed sigunp request', async () => {
       server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400))),
+        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
+          validationErrors: {
+            username: null,
+          },
+        }))),
         // rest.post('/api/1.0/users', (req, res, ctx) => res.once(ctx.status(400))),
         // res.once Overrides server setup for one test only.
       );

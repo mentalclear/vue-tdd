@@ -136,6 +136,14 @@ describe('Sign Up page tests', () => {
       await userEvent.type(passwordRepeatInput, 'P4ssword');
     };
 
+    const generateValidationError = (field, message) => rest.post(
+      '/api/1.0/users',
+      (req, res, ctx) => res(ctx.status(400), ctx.json({
+        validationErrors: {
+          [field]: message,
+        },
+      })),
+    );
     it('Enable Sign Up when password fields are match', async () => {
       await setup();
 
@@ -223,29 +231,22 @@ describe('Sign Up page tests', () => {
         expect(form).not.toBeInTheDocument();
       });
     });
-    it('Display validation message for username', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
-          validationErrors: {
-            username: 'Username cannot be null',
-          },
-        }))),
-      );
+    it.each`
+      field         | message
+      ${'username'} | ${'Username cannot be null'}
+      ${'email'}    | ${'E-mail cannot be null'}
+      ${'password'} | ${'Password cannot be null'}
+    `('Display $message message for field: $field', async ({ field, message }) => {
+      server.use(generateValidationError(field, message));
 
       await setup();
       await userEvent.click(button);
 
-      const text = await screen.findByText('Username cannot be null');
+      const text = await screen.findByText(message);
       expect(text).toBeInTheDocument();
     });
     it('Hides spinner after error response received', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
-          validationErrors: {
-            username: 'Username cannot be null',
-          },
-        }))),
-      );
+      server.use(generateValidationError('username', 'Username cannot be null'));
 
       await setup();
       await userEvent.click(button);
@@ -255,34 +256,13 @@ describe('Sign Up page tests', () => {
       expect(spinner).not.toBeInTheDocument();
     });
     it('Enable the button after response received', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
-          validationErrors: {
-            username: 'Username cannot be null',
-          },
-        }))),
-      );
+      server.use(generateValidationError('username', 'Username cannot be null'));
 
       await setup();
       await userEvent.click(button);
       await screen.findByText('Username cannot be null');
 
       expect(button).toBeEnabled();
-    });
-    it('Display validation message for e-mail', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => res(ctx.status(400), ctx.json({
-          validationErrors: {
-            email: 'E-mail cannot be null',
-          },
-        }))),
-      );
-
-      await setup();
-      await userEvent.click(button);
-
-      const text = await screen.findByText('E-mail cannot be null');
-      expect(text).toBeInTheDocument();
     });
   });
 });

@@ -25,21 +25,15 @@
           :help="errors.email"
           placeholder="E-Mail"
         />
+        <TheInput
+          id="password"
+          v-model="password"
+          label="Password:"
+          type="password"
+          :help="errors.password"
+          placeholder="password"
+        />
         <!-- <div class="mb-3">
-          <label
-            for="email"
-            class="form-label"
-          >
-            User Email:
-            <input
-              id="email"
-              v-model="email"
-              type="text"
-              placeholder="E-Mail"
-              class="form-control"
-            ></label>
-        </div> -->
-        <div class="mb-3">
           <label
             for="password"
             class="form-label"
@@ -52,7 +46,7 @@
               placeholder="password"
               class="form-control"
             ></label>
-        </div>
+        </div> -->
         <div class="mb-3">
           <label
             for="repeat-password"

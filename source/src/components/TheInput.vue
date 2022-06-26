@@ -7,11 +7,11 @@
       {{ label }}
       <input
         :id="id"
-        type="text"
         :placeholder="placeholder"
         class="form-control"
         :class="{'is-invalid': help}"
         :value="modelValue"
+        :type="type"
         @input="$emit('update:modelValue', $event.target.value)"
       >
       <span class="invalid-feedback">{{ help }}</span>
@@ -36,6 +36,7 @@ export default {
     },
     modelValue: { type: String, default: '' },
     placeholder: { type: String, default: '' },
+    type: { type: String, default: '' },
   },
   emits: ['update:modelValue'],
 };

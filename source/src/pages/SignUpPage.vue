@@ -33,34 +33,14 @@
           :help="errors.password"
           placeholder="password"
         />
-        <!-- <div class="mb-3">
-          <label
-            for="password"
-            class="form-label"
-          >
-            Password:
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              placeholder="password"
-              class="form-control"
-            ></label>
-        </div> -->
-        <div class="mb-3">
-          <label
-            for="repeat-password"
-            class="form-label"
-          >
-            Repeat Password:
-            <input
-              id="repeat-password"
-              v-model="passwordRepeat"
-              type="password"
-              placeholder="repeat password"
-              class="form-control"
-            ></label>
-        </div>
+        <TheInput
+          id="repeat-password"
+          v-model="passwordRepeat"
+          label="Repeat Password:"
+          type="password"
+          placeholder="repeat password"
+          :help="hasPasswordMismatch ? 'Password mismatch' : ''"
+        />
         <div class="text-center">
           <button
             :disabled="isDisabled || apiProgress"
@@ -111,6 +91,20 @@ export default {
       return this.password && this.passwordRepeat
         ? this.password !== this.passwordRepeat
         : true;
+    },
+    hasPasswordMismatch() {
+      return this.password !== this.passwordRepeat;
+    },
+  },
+  watch: {
+    username() {
+      delete this.errors.username;
+    },
+    email() {
+      delete this.errors.email;
+    },
+    password() {
+      delete this.errors.password;
     },
   },
   methods: {

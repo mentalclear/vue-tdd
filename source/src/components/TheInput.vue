@@ -14,7 +14,10 @@
         :type="type"
         @input="$emit('update:modelValue', $event.target.value)"
       >
-      <span class="invalid-feedback">{{ help }}</span>
+      <span
+        v-if="help"
+        class="invalid-feedback"
+      >{{ help }}</span>
     </label>
   </div>
 </template>

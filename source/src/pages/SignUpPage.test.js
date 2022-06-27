@@ -122,13 +122,14 @@ describe('Sign Up page tests', () => {
       server.close();
     });
 
-    let button;
+    let button; let passwordInput; let
+      passwordRepeatInput; let usernameInput; let emailInput;
     const setup = async () => {
       render(SignUpPage);
-      const usernameInput = screen.queryByLabelText('User Name:');
-      const emailInput = screen.queryByLabelText('User Email:');
-      const passwordInput = screen.queryByLabelText('Password:');
-      const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
+      usernameInput = screen.queryByLabelText('User Name:');
+      emailInput = screen.queryByLabelText('User Email:');
+      passwordInput = screen.queryByLabelText('Password:');
+      passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
       button = screen.queryByRole('button', { name: 'Sign Up' });
       await userEvent.type(usernameInput, 'user1');
       await userEvent.type(emailInput, 'user1@mail.com');
@@ -263,6 +264,46 @@ describe('Sign Up page tests', () => {
       await screen.findByText('Username cannot be null');
 
       expect(button).toBeEnabled();
+    });
+    it('Displays mismatch message for password repeat input', async () => {
+      await setup();
+
+      await userEvent.type(passwordInput, 'P4ss1');
+      await userEvent.type(passwordRepeatInput, 'P4ss2');
+      const text = await screen.findByText('Password mismatch');
+      expect(text).toBeInTheDocument();
+    });
+    // it('Clear validation error after password field is updated', async () => {
+    //   server.use(generateValidationError('password', 'Password cannot be null'));
+
+    //   await setup();
+    //   await userEvent.click(button);
+    //   const text = await screen.findByText('Password cannot be null');
+    //   await userEvent.type(passwordInput, 'udpated');
+
+    //   expect(text).not.toBeInTheDocument();
+    // });
+    // it.each`
+    //   field         | message                      | label
+    //   ${'username'} | ${'Username cannot be null'} | ${'User Name:'}
+    //   ${'email'}    | ${'E-mail cannot be null'}   | ${'User Email:'}
+    //   ${'password'} | ${'Password cannot be null'} | ${'Password:'}
+    it.each`
+      field         | message                      | placeholder
+      ${'username'} | ${'Username cannot be null'} | ${'User Name'}
+      ${'email'}    | ${'E-mail cannot be null'}   | ${'E-Mail'}
+      ${'password'} | ${'Password cannot be null'} | ${'password'}
+    `('Clear validation error after $field field is updated', async ({ field, message, placeholder }) => {
+      server.use(generateValidationError(field, message));
+
+      await setup();
+      await userEvent.click(button);
+      const text = await screen.findByText(message);
+      // Got it to work like this:
+      const input = screen.getByPlaceholderText(placeholder);
+      await userEvent.type(input, 'udpated');
+
+      expect(text).not.toBeInTheDocument();
     });
   });
 });

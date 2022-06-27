@@ -273,21 +273,6 @@ describe('Sign Up page tests', () => {
       const text = await screen.findByText('Password mismatch');
       expect(text).toBeInTheDocument();
     });
-    // it('Clear validation error after password field is updated', async () => {
-    //   server.use(generateValidationError('password', 'Password cannot be null'));
-
-    //   await setup();
-    //   await userEvent.click(button);
-    //   const text = await screen.findByText('Password cannot be null');
-    //   await userEvent.type(passwordInput, 'udpated');
-
-    //   expect(text).not.toBeInTheDocument();
-    // });
-    // it.each`
-    //   field         | message                      | label
-    //   ${'username'} | ${'Username cannot be null'} | ${'User Name:'}
-    //   ${'email'}    | ${'E-mail cannot be null'}   | ${'User Email:'}
-    //   ${'password'} | ${'Password cannot be null'} | ${'Password:'}
     it.each`
       field         | message                      | placeholder
       ${'username'} | ${'Username cannot be null'} | ${'User Name'}

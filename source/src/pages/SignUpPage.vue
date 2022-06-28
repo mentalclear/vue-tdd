@@ -7,28 +7,28 @@
     >
       <div class="card-header">
         <h1 class="text-center">
-          Sign Up
+          {{ $t('signUp') }}
         </h1>
       </div>
       <div class="card-body">
         <TheInput
           id="username"
           v-model="username"
-          label="User Name:"
+          :label="$t('username')"
           :help="errors.username"
           placeholder="User Name"
         />
         <TheInput
           id="email"
           v-model="email"
-          label="User Email:"
+          :label="$t('email')"
           :help="errors.email"
           placeholder="E-Mail"
         />
         <TheInput
           id="password"
           v-model="password"
-          label="Password:"
+          :label="$t('password')"
           type="password"
           :help="errors.password"
           placeholder="password"
@@ -36,7 +36,7 @@
         <TheInput
           id="repeat-password"
           v-model="passwordRepeat"
-          label="Repeat Password:"
+          :label="$t('passwordRepeat')"
           type="password"
           placeholder="repeat password"
           :help="hasPasswordMismatch ? 'Password mismatch' : ''"
@@ -52,7 +52,7 @@
               class="spinner-border spinner-border-sm"
               role="status"
             />
-            Sign Up
+            {{ $t('signUp') }}
           </button>
         </div>
       </div>
@@ -65,6 +65,22 @@
       Please check your e-mail to activate your account
     </div>
   </div>
+  <img
+    src="https://flagcdn.com/20x15/ru.png"
+    height="20"
+    alt="Russia"
+    title="Русский"
+    @click="$i18n.locale = 'ru'"
+    @keydown="$i18n.locale = 'ru'"
+  >
+  <img
+    src="https://flagcdn.com/20x15/us.png"
+    height="20"
+    alt="United States"
+    title="English"
+    @click="$i18n.locale = 'en'"
+    @keydown="$i18n.locale = 'en'"
+  >
 </template>
 
 <script>
@@ -139,3 +155,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+img {
+  cursor: pointer;
+}
+</style>

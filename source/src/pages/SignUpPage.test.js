@@ -5,90 +5,99 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
 import '@testing-library/jest-dom';
+import i18n from '../locales/i18n';
+import en from '../locales/en.json';
+import ru from '../locales/ru.json';
 
 describe('Sign Up page tests', () => {
   describe('Layout', () => {
+    const setupRender = () => render(SignUpPage, {
+      global: {
+        plugins: [i18n],
+      },
+    });
+
     it('Has Sign Up header', () => {
-      render(SignUpPage);
+      setupRender();
       const header = screen.queryByRole('heading', { name: 'Sign Up' });
       expect(header).toBeInTheDocument();
     });
     it('Has 3 input fields', () => {
-      const { container } = render(SignUpPage);
+      const { container } = render(SignUpPage, { global: { plugins: [i18n] } });
       const inputCount = container.querySelectorAll('input').length;
       expect(inputCount).toBe(4);
     });
     describe('Username Input', () => {
       it('Has username input', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByPlaceholderText('User Name');
         expect(input).toBeInTheDocument();
       });
       it('Has username input label', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('User Name:');
         expect(input).toBeInTheDocument();
       });
     });
     describe('E-Mail Input', () => {
       it('Has email input', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByPlaceholderText('E-Mail');
         expect(input).toBeInTheDocument();
       });
       it('Has email input label', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('User Email:');
         expect(input).toBeInTheDocument();
       });
     });
     describe('Password Input', () => {
       it('Has password input', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByPlaceholderText('password');
         expect(input).toBeInTheDocument();
       });
       it('Has password input label', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('Password:');
         expect(input).toBeInTheDocument();
       });
       it('Password input has correct type', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('Password:');
         expect(input.type).toBe('password');
       });
     });
     describe('Repeat Password Input', () => {
       it('Has Repeat Password input', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByPlaceholderText(/repeat password/);
         expect(input).toBeInTheDocument();
       });
       it('Has Repeat Password input label', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('Repeat Password:');
         expect(input).toBeInTheDocument();
       });
       it('Repeat Password input has correct type', () => {
-        render(SignUpPage);
+        setupRender();
         const input = screen.queryByLabelText('Repeat Password:');
         expect(input.type).toBe('password');
       });
     });
     describe('Sign Up button', () => {
       it('Has Sign Up Button', () => {
-        render(SignUpPage);
+        setupRender();
         const button = screen.queryByRole('button', { name: 'Sign Up' });
         expect(button).toBeInTheDocument();
       });
       it('Sign Up button To be Disabled by default', () => {
-        render(SignUpPage);
+        setupRender();
         const button = screen.queryByRole('button', { name: 'Sign Up' });
         expect(button).toBeDisabled();
       });
       it('Enable Sign Up when password fields are match', async () => {
-        render(SignUpPage);
+        setupRender();
         const passwordInput = screen.queryByLabelText('Password:');
         const passwordRepeatInput = screen.queryByLabelText('Repeat Password:');
         const button = screen.queryByRole('button', { name: 'Sign Up' });
@@ -125,7 +134,11 @@ describe('Sign Up page tests', () => {
     let button; let passwordInput; let
       passwordRepeatInput; let usernameInput; let emailInput;
     const setup = async () => {
-      render(SignUpPage);
+      render(SignUpPage, {
+        global: {
+          plugins: [i18n],
+        },
+      });
       usernameInput = screen.queryByLabelText('User Name:');
       emailInput = screen.queryByLabelText('User Email:');
       passwordInput = screen.queryByLabelText('Password:');
@@ -289,6 +302,52 @@ describe('Sign Up page tests', () => {
       await userEvent.type(input, 'udpated');
 
       expect(text).not.toBeInTheDocument();
+    });
+  });
+  describe('Inernationalization', () => {
+    const setupRender = () => {
+      render(SignUpPage, {
+        global: {
+          plugins: [i18n],
+        },
+      });
+    };
+    it('Initially displays all text in English', async () => {
+      setupRender();
+      expect(screen.queryByRole('heading', { name: en.signUp })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: en.signUp })).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
+    });
+    it('Displays all text in Russian after setting that language', async () => {
+      setupRender();
+
+      const russian = screen.queryByTitle('Русский');
+      await userEvent.click(russian);
+
+      expect(screen.queryByRole('heading', { name: ru.signUp })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: ru.signUp })).toBeInTheDocument();
+      expect(screen.queryByLabelText(ru.username)).toBeInTheDocument();
+      expect(screen.queryByLabelText(ru.email)).toBeInTheDocument();
+      expect(screen.queryByLabelText(ru.password)).toBeInTheDocument();
+      expect(screen.queryByLabelText(ru.passwordRepeat)).toBeInTheDocument();
+    });
+    it('Displays all text in English after page is translated to Russian', async () => {
+      setupRender();
+
+      const russian = screen.queryByTitle('Русский');
+      await userEvent.click(russian);
+      const english = screen.queryByTitle('English');
+      await userEvent.click(english);
+
+      expect(screen.queryByRole('heading', { name: en.signUp })).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: en.signUp })).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+      expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
     });
   });
 });

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import SignUpPage from './SignUpPage.vue';
+import TheLanguageSelector from '../components/TheLanguageSelector.vue';
 import '@testing-library/jest-dom';
 import i18n from '../locales/i18n';
 import en from '../locales/en.json';
@@ -305,15 +306,35 @@ describe('Sign Up page tests', () => {
     });
   });
   describe('Inernationalization', () => {
+    let russianLanguage; let
+      englishLanguage;
     const setupRender = () => {
-      render(SignUpPage, {
+      // Include custom component
+      const app = {
+        components: {
+          SignUpPage,
+          TheLanguageSelector,
+        },
+        template: `
+          <SignUpPage />
+          <TheLanguageSelector />
+        `,
+      };
+
+      render(app, {
         global: {
           plugins: [i18n],
         },
       });
+      russianLanguage = screen.queryByTitle('Русский');
+      englishLanguage = screen.queryByTitle('English');
     };
+
+    afterEach(() => { i18n.global.locale = 'en'; });
+
     it('Initially displays all text in English', async () => {
       setupRender();
+      // screen.debug(); debug screen output!
       expect(screen.queryByRole('heading', { name: en.signUp })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: en.signUp })).toBeInTheDocument();
       expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
@@ -321,11 +342,11 @@ describe('Sign Up page tests', () => {
       expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
       expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
     });
+
     it('Displays all text in Russian after setting that language', async () => {
       setupRender();
 
-      const russian = screen.queryByTitle('Русский');
-      await userEvent.click(russian);
+      await userEvent.click(russianLanguage);
 
       expect(screen.queryByRole('heading', { name: ru.signUp })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: ru.signUp })).toBeInTheDocument();
@@ -334,13 +355,12 @@ describe('Sign Up page tests', () => {
       expect(screen.queryByLabelText(ru.password)).toBeInTheDocument();
       expect(screen.queryByLabelText(ru.passwordRepeat)).toBeInTheDocument();
     });
+
     it('Displays all text in English after page is translated to Russian', async () => {
       setupRender();
 
-      const russian = screen.queryByTitle('Русский');
-      await userEvent.click(russian);
-      const english = screen.queryByTitle('English');
-      await userEvent.click(english);
+      await userEvent.click(russianLanguage);
+      await userEvent.click(englishLanguage);
 
       expect(screen.queryByRole('heading', { name: en.signUp })).toBeInTheDocument();
       expect(screen.queryByRole('button', { name: en.signUp })).toBeInTheDocument();

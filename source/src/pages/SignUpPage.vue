@@ -65,22 +65,6 @@
       Please check your e-mail to activate your account
     </div>
   </div>
-  <img
-    src="https://flagcdn.com/20x15/ru.png"
-    height="20"
-    alt="Russia"
-    title="Русский"
-    @click="$i18n.locale = 'ru'"
-    @keydown="$i18n.locale = 'ru'"
-  >
-  <img
-    src="https://flagcdn.com/20x15/us.png"
-    height="20"
-    alt="United States"
-    title="English"
-    @click="$i18n.locale = 'en'"
-    @keydown="$i18n.locale = 'en'"
-  >
 </template>
 
 <script>
@@ -155,8 +139,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-img {
-  cursor: pointer;
-}
-</style>

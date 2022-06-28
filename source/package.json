@@ -54,6 +54,9 @@
         "node",
         "node-addons"
       ]
-    }
+    },
+    "setupFilesAfterEnv": [
+      "./test/setupTest.js"
+    ]
   }
 }

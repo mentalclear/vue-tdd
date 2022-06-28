@@ -1,52 +1,49 @@
 import { render, screen } from '@testing-library/vue';
 import App from './App.vue';
-import '@testing-library/jest-dom';
 import i18n from './locales/i18n';
 
+const setupPath = (path) => {
+  window.history.pushState({}, '', path);
+  render(App, {
+    global: {
+      plugins: [i18n],
+    },
+  });
+};
+
 describe('Routing', () => {
-  it('Displays home page at /', () => {
-    render(App, {
-      global: {
-        plugins: [i18n],
-      },
-    });
+  it.each`
+  path          | pageTestId
+  ${'/'}        | ${'home-page'}
+  ${'/signup'}  | ${'signup-page'} 
+  ${'/login'}   | ${'login-page'} 
+  ${'/user/1'}  | ${'user-page'}
+  ${'/user/2'}  | ${'user-page'}
+  `('Display $pageTestId at path: $path', ({ path, pageTestId }) => {
+    setupPath(path);
 
-    const page = screen.queryByTestId('home-page');
+    const page = screen.queryByTestId(pageTestId);
     expect(page).toBeInTheDocument();
   });
 
-  it('Will not display Sign Up page at /', () => {
-    render(App, {
-      global: {
-        plugins: [i18n],
-      },
-    });
+  it.each`
+  path          | pageTestId
+  ${'/'}        | ${'signup-page'}
+  ${'/'}        | ${'login-page'} 
+  ${'/'}        | ${'user-page'}
+  ${'/signup'}  | ${'home-page'} 
+  ${'/signup'}  | ${'login-page'} 
+  ${'/signup'}  | ${'user-page'} 
+  ${'/login'}   | ${'home-page'}
+  ${'/login'}   | ${'signup-page'}
+  ${'/login'}   | ${'user-page'}
+  ${'/user/1'}  | ${'signup-page'}
+  ${'/user/1'}  | ${'login-page'} 
+  ${'/user/1'}  | ${'home-page'}
+  `('Will not display $pageTestId page at path: $path', ({ path, pageTestId }) => {
+    setupPath(path);
 
-    const page = screen.queryByTestId('signup-page');
-    expect(page).not.toBeInTheDocument();
-  });
-
-  it('Will display Sign Up page at /signup', () => {
-    window.history.pushState({}, '', '/signup');
-    render(App, {
-      global: {
-        plugins: [i18n],
-      },
-    });
-
-    const page = screen.queryByTestId('signup-page');
-    expect(page).toBeInTheDocument();
-  });
-
-  it('Will display Home Page at /signup', () => {
-    window.history.pushState({}, '', '/signup');
-    render(App, {
-      global: {
-        plugins: [i18n],
-      },
-    });
-
-    const page = screen.queryByTestId('home-page');
+    const page = screen.queryByTestId(pageTestId);
     expect(page).not.toBeInTheDocument();
   });
 });

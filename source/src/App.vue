@@ -1,5 +1,18 @@
 <template>
   <div class="container">
+    <a
+      href="/"
+      title="Home"
+      @click.prevent="onClickLink"
+    >Hoaxify</a>
+    <a
+      href="/signup"
+      @click.prevent="onClickLink"
+    >{{ $t('signUp') }} </a>
+    <a
+      href="/login"
+      @click.prevent="onClickLink"
+    >LogIn </a>
     <HomePage v-if="path === '/'" />
     <SignUpPage v-else-if="path === '/signup'" />
     <LoginPage v-else-if="path === '/login'" />
@@ -25,9 +38,15 @@ export default {
     TheLanguageSelector,
 
   },
-  computed: {
-    path() {
-      return window.location.pathname;
+  data() {
+    return {
+      path: window.location.pathname,
+    };
+  },
+  methods: {
+    onClickLink(event) {
+      this.path = event.target.attributes.href.value;
+      window.history.pushState({}, '', this.path);
     },
   },
 };

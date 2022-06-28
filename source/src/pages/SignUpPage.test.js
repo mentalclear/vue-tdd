@@ -10,6 +10,31 @@ import i18n from '../locales/i18n';
 import en from '../locales/en.json';
 import ru from '../locales/ru.json';
 
+let requestBody;
+let counter = 0;
+let acceptLanguageHeader;
+// Creating msw server here, to intercept rest reqs:
+const server = setupServer(
+  rest.post('/api/1.0/users', (req, res, ctx) => {
+    acceptLanguageHeader = req.headers.get('Accept-Language');
+    requestBody = req.body;
+    counter += 1;
+    return res(ctx.status(200));
+  }),
+);
+
+beforeAll(() => {
+  server.listen();
+});
+beforeEach(() => {
+  counter = 0;
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
+
 describe('Sign Up page tests', () => {
   describe('Layout', () => {
     const setupRender = () => render(SignUpPage, {
@@ -109,29 +134,6 @@ describe('Sign Up page tests', () => {
     });
   });
   describe('Interactions', () => {
-    let requestBody;
-    let counter = 0;
-    // Creating msw server here, to intercept rest reqs:
-    const server = setupServer(
-      rest.post('/api/1.0/users', (req, res, ctx) => {
-        requestBody = req.body;
-        counter += 1;
-        return res(ctx.status(200));
-      }),
-    );
-
-    beforeAll(() => {
-      server.listen();
-    });
-    beforeEach(() => {
-      counter = 0;
-      server.resetHandlers();
-    });
-
-    afterAll(() => {
-      server.close();
-    });
-
     let button; let passwordInput; let
       passwordRepeatInput; let usernameInput; let emailInput;
     const setup = async () => {
@@ -306,8 +308,13 @@ describe('Sign Up page tests', () => {
     });
   });
   describe('Inernationalization', () => {
-    let russianLanguage; let
-      englishLanguage;
+    let russianLanguage;
+    let englishLanguage;
+    let username;
+    let email;
+    let password;
+    let passwordRepeat;
+    let button;
     const setupRender = () => {
       // Include custom component
       const app = {
@@ -328,6 +335,11 @@ describe('Sign Up page tests', () => {
       });
       russianLanguage = screen.queryByTitle('Русский');
       englishLanguage = screen.queryByTitle('English');
+      username = screen.getByLabelText(en.username);
+      email = screen.getByLabelText(en.email);
+      password = screen.getByLabelText(en.password);
+      passwordRepeat = screen.queryByLabelText(en.passwordRepeat);
+      button = screen.queryByRole('button', { name: en.signUp });
     };
 
     afterEach(() => { i18n.global.locale = 'en'; });
@@ -368,6 +380,65 @@ describe('Sign Up page tests', () => {
       expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
       expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
       expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
+    });
+
+    it('Displays password mismatch validation in Russian', async () => {
+      setupRender();
+
+      await userEvent.click(russianLanguage);
+      await userEvent.type(password, 'P4ssword');
+      await userEvent.type(passwordRepeat, 'N3wP4ss');
+
+      const validation = screen.queryByText(ru.passwordMismatchValidation);
+      expect(validation).toBeInTheDocument();
+    });
+
+    it('Send accept-language having en to the backend for sign up request', async () => {
+      setupRender();
+      await userEvent.type(username, 'user300');
+      await userEvent.type(email, 'user300@mail.com');
+      await userEvent.type(password, 'P4ssword');
+      await userEvent.type(passwordRepeat, 'P4ssword');
+      await userEvent.click(button);
+      await screen.findByText(
+        'Please check your e-mail to activate your account',
+      );
+
+      expect(acceptLanguageHeader).toBe('en');
+    });
+
+    it('Send accept-language having ru to the backend after that one selected', async () => {
+      setupRender();
+
+      await userEvent.click(russianLanguage);
+
+      await userEvent.type(username, 'user300');
+      await userEvent.type(email, 'user300@mail.com');
+      await userEvent.type(password, 'P4ssword');
+      await userEvent.type(passwordRepeat, 'P4ssword');
+      await userEvent.click(button);
+      expect(acceptLanguageHeader).toBe('ru');
+
+      await screen.findByText(
+        ru.accountActivationNotification,
+      );
+    });
+
+    it('Display Account activation message in Russian when Russian is selected', async () => {
+      setupRender();
+
+      await userEvent.click(russianLanguage);
+
+      await userEvent.type(username, 'user300');
+      await userEvent.type(email, 'user300@mail.com');
+      await userEvent.type(password, 'P4ssword');
+      await userEvent.type(passwordRepeat, 'P4ssword');
+      await userEvent.click(button);
+
+      const accountActivation = await screen.findByText(
+        ru.accountActivationNotification,
+      );
+      expect(accountActivation).toBeInTheDocument();
     });
   });
 });

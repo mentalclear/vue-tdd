@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import signUp from '../api/apiCalls';
+import axios from 'axios';
 import TheInput from '../components/TheInput.vue';
 
 export default {
@@ -108,7 +108,7 @@ export default {
     },
   },
   methods: {
-    async submit() {
+    submit() {
       this.apiProgress = true;
       const body = {
         username: this.username,
@@ -116,15 +116,20 @@ export default {
         password: this.password,
       };
 
-      try {
-        await signUp(body);
-        this.signUpSuccess = true;
-      } catch (error) {
-        if (error.response.status === 400) {
-          this.errors = error.response.data.validationErrors;
-        }
-        this.apiProgress = false;
-      }
+      axios.post('/api/1.0/users', body, {
+        headers: {
+          'Accept-Language': this.$i18n.locale,
+        },
+      })
+        .then(() => {
+          this.signUpSuccess = true;
+        })
+        .catch((error) => {
+          if (error.response.status === 400) {
+            this.errors = error.response.data.validationErrors;
+          }
+          this.apiProgress = false;
+        });
 
       // Need this for fetch tests:
       // fetch('/api/1.0/users', {

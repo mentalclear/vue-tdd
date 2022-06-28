@@ -110,6 +110,7 @@ export default {
   methods: {
     async submit() {
       this.apiProgress = true;
+
       const body = {
         username: this.username,
         email: this.email,
@@ -117,7 +118,7 @@ export default {
       };
 
       try {
-        await signUp(body);
+        signUp(body);
         this.signUpSuccess = true;
       } catch (error) {
         if (error.response.status === 400) {

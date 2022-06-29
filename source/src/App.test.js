@@ -2,26 +2,30 @@ import { render, screen } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import App from './App.vue';
 import i18n from './locales/i18n';
+import router from './routes/router';
 
-const setupPath = (path) => {
-  window.history.pushState({}, '', path);
+const setupPath = async (path) => {
   render(App, {
     global: {
-      plugins: [i18n],
+      plugins: [i18n, router],
     },
   });
+  router.replace(path);
+  await router.isReady();
 };
 
 describe('Routing', () => {
   it.each`
-  path          | pageTestId
-  ${'/'}        | ${'home-page'}
-  ${'/signup'}  | ${'signup-page'} 
-  ${'/login'}   | ${'login-page'} 
-  ${'/user/1'}  | ${'user-page'}
-  ${'/user/2'}  | ${'user-page'}
-  `('Display $pageTestId at path: $path', ({ path, pageTestId }) => {
-    setupPath(path);
+  path                 | pageTestId
+  ${'/'}               | ${'home-page'}
+  ${'/signup'}         | ${'signup-page'} 
+  ${'/login'}          | ${'login-page'} 
+  ${'/user/1'}         | ${'user-page'}
+  ${'/user/2'}         | ${'user-page'}
+  ${'/activate/1234'}  | ${'activation-page'}
+  ${'/activate/5678'}  | ${'activation-page'}
+  `('Display $pageTestId at path: $path', async ({ path, pageTestId }) => {
+    await setupPath(path);
 
     const page = screen.queryByTestId(pageTestId);
     expect(page).toBeInTheDocument();
@@ -32,17 +36,25 @@ describe('Routing', () => {
   ${'/'}        | ${'signup-page'}
   ${'/'}        | ${'login-page'} 
   ${'/'}        | ${'user-page'}
+  ${'/'}        | ${'activation-page'}
   ${'/signup'}  | ${'home-page'} 
   ${'/signup'}  | ${'login-page'} 
-  ${'/signup'}  | ${'user-page'} 
+  ${'/signup'}  | ${'user-page'}
+  ${'/signup'}  | ${'activation-page'} 
   ${'/login'}   | ${'home-page'}
   ${'/login'}   | ${'signup-page'}
   ${'/login'}   | ${'user-page'}
+  ${'/login'}   | ${'activation-page'}
   ${'/user/1'}  | ${'signup-page'}
   ${'/user/1'}  | ${'login-page'} 
   ${'/user/1'}  | ${'home-page'}
-  `('Will not display $pageTestId page at path: $path', ({ path, pageTestId }) => {
-    setupPath(path);
+  ${'/user/1'}  | ${'activation-page'}
+  ${'/activate/123'}  | ${'signup-page'}
+  ${'/activate/123'}  | ${'login-page'} 
+  ${'/activate/123'}  | ${'home-page'} 
+  ${'/activate/123'}  | ${'user-page'}
+  `('Will not display $pageTestId page at path: $path', async ({ path, pageTestId }) => {
+    await setupPath(path);
 
     const page = screen.queryByTestId(pageTestId);
     expect(page).not.toBeInTheDocument();
@@ -71,7 +83,7 @@ describe('Routing', () => {
     const link = screen.queryByRole('link', { name: clickingTo });
 
     await userEvent.click(link);
-    const page = screen.queryByTestId(visiblePage);
+    const page = await screen.findByTestId(visiblePage);
     expect(page).toBeInTheDocument();
   });
   it('Display home page after clicking logo', async () => {
@@ -79,7 +91,7 @@ describe('Routing', () => {
 
     const image = screen.queryByAltText('Hoaxify logo');
     await userEvent.click(image);
-    const page = screen.queryByTestId('home-page');
+    const page = await screen.findByTestId('home-page');
     expect(page).toBeInTheDocument();
   });
 });

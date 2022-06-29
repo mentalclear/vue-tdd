@@ -1,8 +1,26 @@
 <template>
   <div data-testid="activation-page">
-    <h1>Account Activation</h1>
+    <div
+      v-if="success"
+      class="alert alert-success mt-3"
+    >
+      Account is activated
+    </div>
   </div>
 </template>
 
 <script>
+import { activate } from '../api/apiCalls';
+
+export default {
+  data() {
+    return {
+      success: false,
+    };
+  },
+  mounted() {
+    activate(this.$route.params.token).then(() => { this.success = true; });
+  },
+
+};
 </script>

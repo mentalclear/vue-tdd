@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import signUp from '../api/apiCalls';
+import { signUp } from '../api/apiCalls';
 import TheInput from '../components/TheInput.vue';
 
 export default {

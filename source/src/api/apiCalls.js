@@ -7,4 +7,6 @@ const signUp = (body) => axios.post('/api/1.0/users', body, {
   },
 });
 
-export default signUp;
+const activate = (token) => axios.post(`/api/1.0/users/token/${token}`);
+
+export { signUp, activate };

@@ -1,18 +1,34 @@
 <template>
+  <div class="shadow-sm bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light container">
+      <div class="container-fluid">
+        <a
+          href="/"
+          title="Home"
+          class="navbar-brand"
+          @click.prevent="onClickLink"
+        ><img
+          src="./assets/hoaxify.png"
+          alt="Hoaxify logo"
+          width="60"
+        >
+          Hoaxify</a>
+        <ul class="navbar-nav">
+          <a
+            href="/signup"
+            class="nav-link"
+            @click.prevent="onClickLink"
+          >{{ $t('signUp') }} </a>
+          <a
+            href="/login"
+            class="nav-link"
+            @click.prevent="onClickLink"
+          >LogIn </a>
+        </ul>
+      </div>
+    </nav>
+  </div>
   <div class="container">
-    <a
-      href="/"
-      title="Home"
-      @click.prevent="onClickLink"
-    >Hoaxify</a>
-    <a
-      href="/signup"
-      @click.prevent="onClickLink"
-    >{{ $t('signUp') }} </a>
-    <a
-      href="/login"
-      @click.prevent="onClickLink"
-    >LogIn </a>
     <HomePage v-if="path === '/'" />
     <SignUpPage v-else-if="path === '/signup'" />
     <LoginPage v-else-if="path === '/login'" />
@@ -45,7 +61,7 @@ export default {
   },
   methods: {
     onClickLink(event) {
-      this.path = event.target.attributes.href.value;
+      this.path = event.currentTarget.attributes.href.value;
       window.history.pushState({}, '', this.path);
     },
   },

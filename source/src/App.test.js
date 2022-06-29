@@ -74,4 +74,12 @@ describe('Routing', () => {
     const page = screen.queryByTestId(visiblePage);
     expect(page).toBeInTheDocument();
   });
+  it('Display home page after clicking logo', async () => {
+    setupPath('/login');
+
+    const image = screen.queryByAltText('Hoaxify logo');
+    await userEvent.click(image);
+    const page = screen.queryByTestId('home-page');
+    expect(page).toBeInTheDocument();
+  });
 });

@@ -50,10 +50,8 @@
             class="btn btn-primary"
             @click.prevent="submit"
           >
-            <span
+            <TheSpinner
               v-if="apiProgress"
-              class="spinner-border spinner-border-sm"
-              role="status"
             />
             {{ $t('signUp') }}
           </button>
@@ -73,10 +71,12 @@
 <script>
 import { signUp } from '../api/apiCalls';
 import TheInput from '../components/TheInput.vue';
+import TheSpinner from '../components/TheSpinner.vue';
 
 export default {
   components: {
     TheInput,
+    TheSpinner,
   },
   data() {
     return {

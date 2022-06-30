@@ -6,20 +6,43 @@
     >
       Account is activated
     </div>
+    <div
+      v-if="fail"
+      class="alert alert-danger mt-3"
+    >
+      Activation failure
+    </div>
+    <TheSpinner
+      v-if="apiProgress"
+      size="normal"
+    />
   </div>
 </template>
 
 <script>
 import { activate } from '../api/apiCalls';
+import TheSpinner from '../components/TheSpinner.vue';
 
 export default {
+  components: {
+    TheSpinner,
+  },
   data() {
     return {
       success: false,
+      fail: false,
+      apiProgress: false,
     };
   },
-  mounted() {
-    activate(this.$route.params.token).then(() => { this.success = true; });
+  async mounted() {
+    this.apiProgress = true;
+    try {
+      await activate(this.$route.params.token);
+      this.success = true;
+    } catch (error) {
+      this.fail = true;
+    }
+    this.apiProgress = false;
   },
 
 };

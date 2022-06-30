@@ -1,8 +1,25 @@
 import { render, screen } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 import App from './App.vue';
 import i18n from './locales/i18n';
 import router from './routes/router';
+
+const server = setupServer(
+  rest.post('/api/1.0/users/token/:token', (req, res, ctx) => res(ctx.status(200))),
+);
+
+beforeAll(() => {
+  server.listen();
+});
+beforeEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
 
 const setupPath = async (path) => {
   render(App, {

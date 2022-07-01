@@ -8,8 +8,10 @@
         v-for="user in page.content"
         :key="user.id"
         class="list-group-item list-group-item-action"
+        @click="$router.push(`/user/${user.id}`)"
+        @keydown="$router.push(`/user/${user.id}`)"
       >
-        {{ user.username }}
+        <UserListItem :user="user" />
       </li>
     </ul>
     <div class="card-footer">
@@ -33,8 +35,12 @@
 
 <script>
 import { loadUsers } from '../api/apiCalls';
+import UserListItem from './UserListItem.vue';
 
 export default {
+  components: {
+    UserListItem,
+  },
   data() {
     return {
       page: {
@@ -58,5 +64,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+li {
+  cursor: pointer;
+}
 </style>

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/vue';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
+import router from '../routes/router';
 import UserList from './UserList.vue';
 
 const users = [
@@ -66,15 +67,24 @@ afterAll(() => {
   server.close();
 });
 
+const setUpUserList = async () => {
+  render(UserList, {
+    global: {
+      plugins: [router],
+    },
+  });
+  await router.isReady();
+};
+
 describe('User List', () => {
   it('Display 3 users in the list', async () => {
-    render(UserList);
+    await setUpUserList();
     const allUsers = await screen.findAllByText(/user/);
 
     expect(allUsers.length).toBe(3);
   });
   it('Display next page link', async () => {
-    render(UserList);
+    await setUpUserList();
     await screen.findByText('user1');
     const nextLink = screen.queryByText('next >');
     expect(nextLink).toBeInTheDocument();

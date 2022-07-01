@@ -5,5 +5,8 @@
     "password": "Пароль:",
     "passwordRepeat": "Повтор Пароля:",
     "passwordMismatchValidation": "Пароли не совпадают",
-    "accountActivationNotification": "Проверьте почту чтобы активировать ваш аккаунт"
+    "accountActivationNotification": "Проверьте почту чтобы активировать ваш аккаунт",
+    "users": "Пользователи",
+    "nextPage": "Следующая >",
+    "previousPage": "< Предыдущая"
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="card mb-3">
     <div class="card-header text-center">
-      <h3>Users</h3>
+      <h3> {{ $t('users') }} </h3>
     </div>
     <ul class="list-group list-group-flush">
       <li
@@ -20,14 +20,14 @@
         class="btn btn-outline-secondary btn-sm float-start"
         @click="loadData(page.page - 1)"
       >
-        &lt; previous
+        {{ $t('previousPage') }}
       </button>
       <button
         v-show="page.totalPages > page.page + 1 && !pendingApiCall"
         class="btn btn-outline-secondary btn-sm float-end"
         @click="loadData(page.page + 1)"
       >
-        next &gt;
+        {{ $t('nextPage') }}
       </button>
       <TheSpinner
         v-show="pendingApiCall"

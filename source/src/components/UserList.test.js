@@ -5,6 +5,10 @@ import { setupServer } from 'msw/node';
 import userEvent from '@testing-library/user-event';
 import router from '../routes/router';
 import UserList from './UserList.vue';
+import i18n from '../locales/i18n';
+import en from '../locales/en.json';
+import ru from '../locales/ru.json';
+import TheLanguageSelector from './TheLanguageSelector.vue';
 
 const users = [
   {
@@ -68,9 +72,20 @@ afterAll(() => {
 });
 
 const setUpUserList = async () => {
-  render(UserList, {
+  const app = {
+    components: {
+      UserList,
+      TheLanguageSelector,
+    },
+    template: `
+      <UserList />
+      <TheLanguageSelector />
+    `,
+  };
+
+  render(app, {
     global: {
-      plugins: [router],
+      plugins: [i18n, router],
     },
   });
   await router.isReady();
@@ -90,7 +105,7 @@ describe('User List', () => {
     expect(nextLink).toBeInTheDocument();
   });
   it('Display next page after clicking next link', async () => {
-    render(UserList);
+    await setUpUserList();
     await screen.findByText('user1');
     const nextLink = screen.queryByText('next >');
     await userEvent.click(nextLink);
@@ -98,7 +113,7 @@ describe('User List', () => {
     expect(firstUserOnPage2).toBeInTheDocument();
   });
   it('Hide next link at the last page', async () => {
-    render(UserList);
+    await setUpUserList();
     screen.queryByText('next >');
     await screen.findByText('user1');
     await userEvent.click(screen.queryByText('next >'));
@@ -108,13 +123,13 @@ describe('User List', () => {
     expect(screen.queryByText('next >')).not.toBeVisible();
   });
   it('Doesn\'t display previous page link in the first page', async () => {
-    render(UserList);
+    await setUpUserList();
     screen.queryByText('next >');
     await screen.findByText('user1');
     expect(screen.queryByText('< previous')).not.toBeVisible();
   });
   it('Display previous page link in the page 2', async () => {
-    render(UserList);
+    await setUpUserList();
     screen.queryByText('next >');
     await screen.findByText('user1');
     await userEvent.click(screen.queryByText('next >'));
@@ -122,7 +137,7 @@ describe('User List', () => {
     expect(screen.queryByText('< previous')).toBeInTheDocument();
   });
   it('Display previous page lafter previous link clicked', async () => {
-    render(UserList);
+    await setUpUserList();
     screen.queryByText('next >');
     await screen.findByText('user1');
     await userEvent.click(screen.queryByText('next >'));
@@ -132,21 +147,44 @@ describe('User List', () => {
     expect(firstUserOnPage1).toBeInTheDocument();
   });
   it('Display spinner when api call is in progress', async () => {
-    render(UserList);
+    await setUpUserList();
     const spinner = screen.queryByRole('status');
     expect(spinner).toBeVisible();
   });
   it('Hides spinner when api call is completed', async () => {
-    render(UserList);
+    await setUpUserList();
     const spinner = screen.queryByRole('status');
     await screen.findByText('user1');
     expect(spinner).not.toBeVisible();
   });
   it('Display spinner after clicking next', async () => {
-    render(UserList);
+    await setUpUserList();
     await screen.findByText('user1');
     await userEvent.click(screen.queryByText('next >'));
     const spinner = screen.queryByRole('status');
     expect(spinner).toBeVisible();
+  });
+});
+
+describe('User List Internatinalization', () => {
+  it('Initially display page and navigation in English', async () => {
+    await setUpUserList();
+    await screen.findByText('user1');
+    await userEvent.click(screen.queryByText('next >'));
+    await screen.findByText('user4');
+    expect(screen.queryByText(en.users)).toBeInTheDocument();
+    expect(screen.queryByText(en.nextPage)).toBeInTheDocument();
+    expect(screen.queryByText(en.previousPage)).toBeInTheDocument();
+  });
+  it('Display page and navigation in Russian after language change', async () => {
+    await setUpUserList();
+    await screen.findByText('user1');
+    await userEvent.click(screen.queryByText('next >'));
+    await screen.findByText('user4');
+    const russianLanguageSelector = screen.queryByTitle('Русский');
+    await userEvent.click(russianLanguageSelector);
+    expect(screen.queryByText(ru.users)).toBeInTheDocument();
+    expect(screen.queryByText(ru.nextPage)).toBeInTheDocument();
+    expect(screen.queryByText(ru.previousPage)).toBeInTheDocument();
   });
 });

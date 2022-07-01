@@ -9,9 +9,10 @@ const signUp = (body) => axios.post('/api/1.0/users', body, {
 
 const activate = (token) => axios.post(`/api/1.0/users/token/${token}`);
 
-const loadUsers = () => axios.get('/api/1.0/users', {
+const loadUsers = (page) => axios.get('/api/1.0/users', {
   params: {
-    page: 0, size: 3,
+    page,
+    size: 3,
   },
 });
 

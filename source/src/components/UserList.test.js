@@ -51,8 +51,8 @@ const server = setupServer(
       page = 0;
       size = 3;
     }
-
-    return res(ctx.status(200), ctx.json(getPage(page, size)));
+    // Added 5ms delay just due to api call race condition
+    return res(ctx.delay(5), ctx.status(200), ctx.json(getPage(page, size)));
   }),
 );
 
@@ -105,13 +105,13 @@ describe('User List', () => {
     await screen.findByText('user4');
     await userEvent.click(screen.queryByText('next >'));
     await screen.findByText('user7');
-    expect(screen.queryByText('next >')).not.toBeInTheDocument();
+    expect(screen.queryByText('next >')).not.toBeVisible();
   });
   it('Doesn\'t display previous page link in the first page', async () => {
     render(UserList);
     screen.queryByText('next >');
     await screen.findByText('user1');
-    expect(screen.queryByText('< previous')).not.toBeInTheDocument();
+    expect(screen.queryByText('< previous')).not.toBeVisible();
   });
   it('Display previous page link in the page 2', async () => {
     render(UserList);
@@ -130,5 +130,23 @@ describe('User List', () => {
     await userEvent.click(screen.queryByText('< previous'));
     const firstUserOnPage1 = await screen.findByText('user1');
     expect(firstUserOnPage1).toBeInTheDocument();
+  });
+  it('Display spinner when api call is in progress', async () => {
+    render(UserList);
+    const spinner = screen.queryByRole('status');
+    expect(spinner).toBeVisible();
+  });
+  it('Hides spinner when api call is completed', async () => {
+    render(UserList);
+    const spinner = screen.queryByRole('status');
+    await screen.findByText('user1');
+    expect(spinner).not.toBeVisible();
+  });
+  it('Display spinner after clicking next', async () => {
+    render(UserList);
+    await screen.findByText('user1');
+    await userEvent.click(screen.queryByText('next >'));
+    const spinner = screen.queryByRole('status');
+    expect(spinner).toBeVisible();
   });
 });

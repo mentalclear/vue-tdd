@@ -9,4 +9,15 @@ const signUp = (body) => axios.post('/api/1.0/users', body, {
 
 const activate = (token) => axios.post(`/api/1.0/users/token/${token}`);
 
-export { signUp, activate };
+const loadUsers = (page) => axios.get('/api/1.0/users', {
+  params: {
+    page,
+    size: 3,
+  },
+});
+
+const getUserById = (id) => axios.get(`/api/1.0/users/${id}`);
+
+export {
+  signUp, activate, loadUsers, getUserById,
+};

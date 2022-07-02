@@ -1,6 +1,6 @@
 # Vue with TDD
 
-Working on the course from Udemy here
+Working on the course from Udemy here, so far so good!
 
 ## Project setup
 ```

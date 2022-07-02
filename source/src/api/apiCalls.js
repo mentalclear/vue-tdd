@@ -16,4 +16,8 @@ const loadUsers = (page) => axios.get('/api/1.0/users', {
   },
 });
 
-export { signUp, activate, loadUsers };
+const getUserById = (id) => axios.get(`/api/1.0/users/${id}`);
+
+export {
+  signUp, activate, loadUsers, getUserById,
+};

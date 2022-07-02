@@ -3,7 +3,7 @@
     src="../assets/profile.png"
     alt="profile image"
     width="30"
-    class="shadow-sm"
+    class="rounded-circle shadow-sm"
   >
   {{ user.username }}
 </template>

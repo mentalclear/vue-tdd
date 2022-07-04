@@ -18,6 +18,8 @@ const loadUsers = (page) => axios.get('/api/1.0/users', {
 
 const getUserById = (id) => axios.get(`/api/1.0/users/${id}`);
 
+const login = (creds) => axios.post('/api/1.0/auth', creds);
+
 export {
-  signUp, activate, loadUsers, getUserById,
+  signUp, activate, loadUsers, getUserById, login,
 };

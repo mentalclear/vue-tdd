@@ -26,8 +26,12 @@
         <div class="text-center">
           <button
             class="btn btn-primary"
-            :disabled="isDisabled"
+            :disabled="isDisabled || apiProgress"
+            @click.prevent="submit"
           >
+            <TheSpinner
+              v-if="apiProgress"
+            />
             LogIn
           </button>
         </div>
@@ -38,15 +42,19 @@
 
 <script>
 import TheInput from '../components/TheInput.vue';
+import TheSpinner from '../components/TheSpinner.vue';
+import { login } from '../api/apiCalls';
 
 export default {
   components: {
     TheInput,
+    TheSpinner,
   },
   data() {
     return {
       email: '',
       password: '',
+      apiProgress: false,
     };
   },
   computed: {
@@ -54,6 +62,20 @@ export default {
       return !(this.email && this.password);
     },
   },
-
+  methods: {
+    async submit() {
+      try {
+        this.apiProgress = true;
+        const creds = {
+          email: this.email,
+          password: this.password,
+        };
+        await login(creds);
+      } catch (error) {
+        //
+        this.apiProgress = false;
+      }
+    },
+  },
 };
 </script>

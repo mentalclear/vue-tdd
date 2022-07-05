@@ -64,8 +64,8 @@ export default {
   },
   methods: {
     async submit() {
+      this.apiProgress = true;
       try {
-        this.apiProgress = true;
         const creds = {
           email: this.email,
           password: this.password,

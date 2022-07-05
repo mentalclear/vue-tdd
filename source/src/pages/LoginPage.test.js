@@ -12,7 +12,7 @@ const server = setupServer(
   rest.post('/api/1.0/auth', (req, res, ctx) => {
     requestBody = req.body;
     counter += 1;
-    return res(ctx.delay(1), ctx.status(401));
+    return res(ctx.delay(100), ctx.status(401));
   }),
 );
 

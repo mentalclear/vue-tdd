@@ -87,8 +87,10 @@ export default {
           email: this.email,
           password: this.password,
         };
-        await login(creds);
+        const response = await login(creds);
         this.$router.replace('/');
+        // Passing user's id using response data
+        this.$store.commit('loginSuccess', response.data.id);
       } catch (error) {
         this.failMessage = error.response.data.message;
       }

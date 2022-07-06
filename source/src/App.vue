@@ -16,16 +16,25 @@
         </RouterLink>
         <ul class="navbar-nav">
           <RouterLink
+            v-if="!$store.state.isLoggedIn"
             to="/signup"
             class="nav-link"
           >
             {{ $t('signUp') }}
           </RouterLink>
           <RouterLink
+            v-if="!$store.state.isLoggedIn"
             to="/login"
             class="nav-link"
           >
             LogIn
+          </RouterLink>
+          <RouterLink
+            v-if="$store.state.isLoggedIn"
+            :to="`/user/${$store.state.userId}`"
+            class="nav-link"
+          >
+            My Profile
           </RouterLink>
         </ul>
       </div>

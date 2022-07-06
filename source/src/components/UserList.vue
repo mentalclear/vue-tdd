@@ -1,20 +1,22 @@
 <template>
-  <div class="card mb-3">
-    <div class="card-header text-center">
+  <TheCard>
+    <template #header>
       <h3> {{ $t('users') }} </h3>
-    </div>
-    <ul class="list-group list-group-flush">
-      <li
-        v-for="user in page.content"
-        :key="user.id"
-        class="list-group-item list-group-item-action"
-        @click="$router.push(`/user/${user.id}`)"
-        @keydown="$router.push(`/user/${user.id}`)"
-      >
-        <UserListItem :user="user" />
-      </li>
-    </ul>
-    <div class="card-footer text-center">
+    </template>
+    <template #default>
+      <ul class="list-group list-group-flush">
+        <li
+          v-for="user in page.content"
+          :key="user.id"
+          class="list-group-item list-group-item-action"
+          @click="$router.push(`/user/${user.id}`)"
+          @keydown="$router.push(`/user/${user.id}`)"
+        >
+          <UserListItem :user="user" />
+        </li>
+      </ul>
+    </template>
+    <template #footer>
       <button
         v-show="page.page > 0 && !pendingApiCall"
         class="btn btn-outline-secondary btn-sm float-start"
@@ -33,19 +35,21 @@
         v-show="pendingApiCall"
         size="normal"
       />
-    </div>
-  </div>
+    </template>
+  </TheCard>
 </template>
 
 <script>
 import { loadUsers } from '../api/apiCalls';
-import UserListItem from './UserListItem.vue';
+import TheCard from './TheCard.vue';
 import TheSpinner from './TheSpinner.vue';
+import UserListItem from './UserListItem.vue';
 
 export default {
   components: {
-    UserListItem,
+    TheCard,
     TheSpinner,
+    UserListItem,
   },
   data() {
     return {

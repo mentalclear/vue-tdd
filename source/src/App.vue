@@ -1,36 +1,5 @@
 <template>
-  <div class="shadow-sm bg-light mb-3">
-    <nav class="navbar navbar-expand-lg navbar-light container">
-      <div class="container-fluid">
-        <RouterLink
-          to="/"
-          title="Home"
-          class="navbar-brand"
-        >
-          <img
-            src="./assets/hoaxify.png"
-            alt="Hoaxify logo"
-            width="60"
-          >
-          Hoaxify
-        </RouterLink>
-        <ul class="navbar-nav">
-          <RouterLink
-            to="/signup"
-            class="nav-link"
-          >
-            {{ $t('signUp') }}
-          </RouterLink>
-          <RouterLink
-            to="/login"
-            class="nav-link"
-          >
-            LogIn
-          </RouterLink>
-        </ul>
-      </div>
-    </nav>
-  </div>
+  <TheNavBar />
   <div class="container">
     <RouterView />
     <TheLanguageSelector />
@@ -39,11 +8,13 @@
 
 <script>
 import TheLanguageSelector from './components/TheLanguageSelector.vue';
+import TheNavBar from './components/TheNavBar.vue';
 
 export default {
   name: 'App',
   components: {
     TheLanguageSelector,
+    TheNavBar,
   },
   data() {
     return {

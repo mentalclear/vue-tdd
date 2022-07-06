@@ -8,5 +8,6 @@
     "accountActivationNotification": "Проверьте почту чтобы активировать ваш аккаунт",
     "users": "Пользователи",
     "nextPage": "Следующая >",
-    "previousPage": "< Предыдущая"
+    "previousPage": "< Предыдущая",
+    "login": "Логин"
 }

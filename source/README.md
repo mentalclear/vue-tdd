@@ -1,6 +1,7 @@
 # Vue with TDD
 
-Working on the course from Udemy here
+Working on the course from Udemy here, so far so good!
+[Course Instructor's repo] (https://github.com/basarbk/tdd-vue)
 
 ## Project setup
 ```

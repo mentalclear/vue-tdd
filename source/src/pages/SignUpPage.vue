@@ -5,58 +5,57 @@
   >
     <form
       v-if="!signUpSuccess"
-      class="card mb-5"
+      class="mb-5"
       data-testid="form-sign-up"
     >
-      <div class="card-header">
-        <h1 class="text-center">
-          {{ $t('signUp') }}
-        </h1>
-      </div>
-      <div class="card-body">
-        <TheInput
-          id="username"
-          v-model="username"
-          :label="$t('username')"
-          :help="errors.username"
-          placeholder="User Name"
-        />
-        <TheInput
-          id="email"
-          v-model="email"
-          :label="$t('email')"
-          :help="errors.email"
-          placeholder="E-Mail"
-        />
-        <TheInput
-          id="password"
-          v-model="password"
-          :label="$t('password')"
-          type="password"
-          :help="errors.password"
-          placeholder="password"
-        />
-        <TheInput
-          id="repeat-password"
-          v-model="passwordRepeat"
-          :label="$t('passwordRepeat')"
-          type="password"
-          placeholder="repeat password"
-          :help="hasPasswordMismatch ? $t('passwordMismatchValidation') : ''"
-        />
-        <div class="text-center">
-          <button
-            :disabled="isDisabled || apiProgress"
-            class="btn btn-primary"
-            @click.prevent="submit"
-          >
-            <TheSpinner
-              v-if="apiProgress"
-            />
+      <TheCard>
+        <template #header>
+          <h1>
             {{ $t('signUp') }}
-          </button>
-        </div>
-      </div>
+          </h1>
+        </template>
+        <template #body>
+          <TheInput
+            id="username"
+            v-model="username"
+            :label="$t('username')"
+            :help="errors.username"
+            placeholder="User Name"
+          />
+          <TheInput
+            id="email"
+            v-model="email"
+            :label="$t('email')"
+            :help="errors.email"
+            placeholder="E-Mail"
+          />
+          <TheInput
+            id="password"
+            v-model="password"
+            :label="$t('password')"
+            type="password"
+            :help="errors.password"
+            placeholder="password"
+          />
+          <TheInput
+            id="repeat-password"
+            v-model="passwordRepeat"
+            :label="$t('passwordRepeat')"
+            type="password"
+            placeholder="repeat password"
+            :help="hasPasswordMismatch ? $t('passwordMismatchValidation') : ''"
+          />
+          <div class="text-center">
+            <TheProgressButton
+              :api-progress="apiProgress"
+              :disabled="isDisabled"
+              @click-custom-button="submit"
+            >
+              {{ $t('signUp') }}
+            </TheProgressButton>
+          </div>
+        </template>
+      </TheCard>
     </form>
     <div
       v-else
@@ -70,13 +69,16 @@
 
 <script>
 import { signUp } from '../api/apiCalls';
+import TheCard from '../components/TheCard.vue';
 import TheInput from '../components/TheInput.vue';
-import TheSpinner from '../components/TheSpinner.vue';
+import TheProgressButton from '../components/TheProgressButton.vue';
 
 export default {
+  name: 'SignUpPage',
   components: {
+    TheCard,
+    TheProgressButton,
     TheInput,
-    TheSpinner,
   },
   data() {
     return {

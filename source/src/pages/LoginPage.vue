@@ -6,23 +6,29 @@
     <form class="card mb-5">
       <div class="card-header">
         <h1 class="text-center">
-          Login
+          {{ $t('login') }}
         </h1>
       </div>
       <div class="card-body">
         <TheInput
           id="email"
           v-model="email"
-          label="E-Mail"
+          :label="$t('email')"
           placeholder="E-Mail"
         />
         <TheInput
           id="password"
           v-model="password"
-          label="Password"
+          :label="$t('password')"
           type="password"
           placeholder="password"
         />
+        <div
+          v-if="failMessage"
+          class="alert alert-danger text-center"
+        >
+          {{ failMessage }}
+        </div>
         <div class="text-center">
           <button
             class="btn btn-primary"
@@ -32,7 +38,7 @@
             <TheSpinner
               v-if="apiProgress"
             />
-            LogIn
+            {{ $t('login') }}
           </button>
         </div>
       </div>
@@ -55,11 +61,20 @@ export default {
       email: '',
       password: '',
       apiProgress: false,
+      failMessage: undefined,
     };
   },
   computed: {
     isDisabled() {
       return !(this.email && this.password);
+    },
+  },
+  watch: {
+    email() {
+      this.failMessage = undefined;
+    },
+    password() {
+      this.failMessage = undefined;
     },
   },
   methods: {
@@ -72,9 +87,9 @@ export default {
         };
         await login(creds);
       } catch (error) {
-        //
-        this.apiProgress = false;
+        this.failMessage = error.response.data.message;
       }
+      this.apiProgress = false;
     },
   },
 };

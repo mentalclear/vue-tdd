@@ -3,58 +3,60 @@
     class="col-lg-6 offset-lg-3 col-md-8 offset-md-2"
     data-testid="login-page"
   >
-    <form class="card mb-5">
-      <div class="card-header">
-        <h1 class="text-center">
-          {{ $t('login') }}
-        </h1>
-      </div>
-      <div class="card-body">
-        <TheInput
-          id="email"
-          v-model="email"
-          :label="$t('email')"
-          placeholder="E-Mail"
-        />
-        <TheInput
-          id="password"
-          v-model="password"
-          :label="$t('password')"
-          type="password"
-          placeholder="password"
-        />
-        <div
-          v-if="failMessage"
-          class="alert alert-danger text-center"
-        >
-          {{ failMessage }}
-        </div>
-        <div class="text-center">
-          <button
-            class="btn btn-primary"
-            :disabled="isDisabled || apiProgress"
-            @click.prevent="submit"
-          >
-            <TheSpinner
-              v-if="apiProgress"
-            />
+    <form class="mb-5">
+      <TheCard>
+        <template #header>
+          <h1>
             {{ $t('login') }}
-          </button>
-        </div>
-      </div>
+          </h1>
+        </template>
+        <template #body>
+          <TheInput
+            id="email"
+            v-model="email"
+            :label="$t('email')"
+            placeholder="E-Mail"
+          />
+          <TheInput
+            id="password"
+            v-model="password"
+            :label="$t('password')"
+            type="password"
+            placeholder="password"
+          />
+          <div
+            v-if="failMessage"
+            class="alert alert-danger text-center"
+          >
+            {{ failMessage }}
+          </div>
+          <div class="text-center">
+            <TheProgressButton
+              :api-progress="apiProgress"
+              :disabled="isDisabled"
+              @click-custom-button="submit"
+            >
+              {{ $t('login') }}
+            </TheProgressButton>
+          </div>
+        </template>
+      </TheCard>
     </form>
   </div>
 </template>
 
 <script>
+import TheCard from '../components/TheCard.vue';
+import TheProgressButton from '../components/TheProgressButton.vue';
 import TheInput from '../components/TheInput.vue';
-import TheSpinner from '../components/TheSpinner.vue';
 import { login } from '../api/apiCalls';
 
 export default {
+  name: 'LoginPage',
   components: {
+    TheCard,
+    TheProgressButton,
     TheInput,
-    TheSpinner,
   },
   data() {
     return {
@@ -86,6 +88,7 @@ export default {
           password: this.password,
         };
         await login(creds);
+        this.$router.replace('/');
       } catch (error) {
         this.failMessage = error.response.data.message;
       }

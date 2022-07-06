@@ -3,6 +3,8 @@ import i18n from '../locales/i18n';
 
 // Suggested use of interceptors caused stuck tests.
 // Will need to figure out why this is happening... not clear.
+// UserPage.test.js is to look at.
+
 // axios.interceptors.request.use((request) => {
 //   // eslint-disable-next-line no-param-reassign
 //   request.headers['Accept-Language'] = i18n.global.locale;

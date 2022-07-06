@@ -1,3 +1,8 @@
+// SecureLS not working for some reason
+// import SecureLS from 'secure-ls';
+
+// const secureLS = new SecureLS();
+
 const setItem = (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
 };

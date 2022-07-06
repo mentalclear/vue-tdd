@@ -90,7 +90,7 @@ export default {
         const response = await login(creds);
         this.$router.replace('/');
         // Passing user's id using response data
-        this.$store.commit('loginSuccess', response.data.id);
+        this.$store.commit('loginSuccess', response.data);
       } catch (error) {
         this.failMessage = error.response.data.message;
       }

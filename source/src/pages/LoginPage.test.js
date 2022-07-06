@@ -9,6 +9,8 @@ import i18n from '../locales/i18n';
 import en from '../locales/en.json';
 import ru from '../locales/ru.json';
 import LoginPage from './LoginPage.vue';
+import store from '../state/store';
+// import storage from '../state/storage';
 
 let requestBody; let counter = 0; let acceptLanguageHeader;
 const server = setupServer(
@@ -39,13 +41,28 @@ let emailInput; let
 const setupRender = async () => {
   render(LoginPage, {
     global: {
-      plugins: [i18n],
+      plugins: [i18n, store],
+      mocks: {
+        $router: {
+          push: () => { },
+        },
+      },
     },
   });
   emailInput = screen.queryByLabelText('User Email:');
   passwordInput = screen.queryByLabelText('Password:');
   button = screen.queryByRole('button', { name: 'Login' });
 };
+
+// const loginSuccess = rest.post('/api/1.0/auth', (req, res, ctx) => res(
+//   ctx.status(200),
+//   ctx.json({
+//     id: 5,
+//     username: 'user5',
+//     image: null,
+//     token: 'abcdefgh',
+//   }),
+// ));
 
 describe('Login Page', () => {
   describe('Layout', () => {
@@ -142,6 +159,21 @@ describe('Login Page', () => {
       await userEvent.type(passwordInput, 'newP4ssword');
       expect(errorMessage).not.toBeInTheDocument();
     });
+    // it('Store id, username and image in storage', async () => {
+    //   server.use(loginSuccess);
+    //   await setupFilled();
+    //   await userEvent.click(button);
+    //   const spinner = screen.queryByRole('status');
+    //   await waitForElementToBeRemoved(spinner);
+    //   const storedState = storage.getItem('auth');
+    //   let keys = null;
+    //   if (storedState) {
+    //     keys = Object.keys(storedState);
+    //   }
+    //   expect(keys.includes('id')).toBeTruthy();
+    //   expect(keys.includes('username')).toBeTruthy();
+    //   expect(keys.includes('image')).toBeTruthy();
+    // });
   });
   describe('Inernationalization', () => {
     let russianLanguage;

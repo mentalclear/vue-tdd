@@ -1,3 +1,5 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-restricted-syntax */
 import { createStore } from 'vuex';
 import storage from './storage';
 
@@ -6,17 +8,22 @@ const store = createStore({
     return storage.getItem('auth');
   },
   mutations: {
-    loginSuccess(state, id) {
+    loginSuccess(state, data) {
       state.isLoggedIn = true;
-      state.id = id;
+      state.id = data.id;
+      state.username = data.username;
+      state.image = data.image;
     },
     reset(state, initialState) {
       state.isLoggedIn = false;
       delete state.id;
-      if (initialState) {
-        Object.keys(initialState).forEach((key) => {
-          state[key] = initialState[key];
-        });
+      // if (initialState) {
+      //   Object.keys(initialState).forEach((key) => {
+      //     state[key] = initialState[key];
+      //   });
+      // }
+      for (const key in initialState) {
+        state[key] = initialState[key];
       }
     },
   },
